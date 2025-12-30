@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://taher-el-mehdi.github.io/bc-table-field-finder/",
+  "homepage": "https://taher-el-mehdi.github.io/bc-tables-hunter/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
