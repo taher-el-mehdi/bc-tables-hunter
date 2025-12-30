@@ -1,0 +1,74 @@
+[
+  {
+    "name": "G/L Account",
+    "id": 15,
+    "category": "Finance",
+    "difficulty": 1
+  },
+  {
+    "name": "Customer",
+    "id": 18,
+    "category": "Sales",
+    "difficulty": 1
+  },
+  {
+    "name": "Vendor",
+    "id": 23,
+    "category": "Purchasing",
+    "difficulty": 1
+  },
+  {
+    "name": "Item",
+    "id": 27,
+    "category": "Inventory",
+    "difficulty": 1
+  },
+  {
+    "name": "Sales Header",
+    "id": 36,
+    "category": "Sales",
+    "difficulty": 2
+  },
+  {
+    "name": "Sales Line",
+    "id": 37,
+    "category": "Sales",
+    "difficulty": 2
+  },
+  {
+    "name": "Purchase Header",
+    "id": 38,
+    "category": "Purchasing",
+    "difficulty": 2
+  },
+  {
+    "name": "Purchase Line",
+    "id": 39,
+    "category": "Purchasing",
+    "difficulty": 2
+  },
+  {
+    "name": "Resource",
+    "id": 156,
+    "category": "Resources",
+    "difficulty": 2
+  },
+  {
+    "name": "Job",
+    "id": 167,
+    "category": "Projects",
+    "difficulty": 2
+  },
+  {
+    "name": "Bank Account",
+    "id": 270,
+    "category": "Finance",
+    "difficulty": 2
+  },
+  {
+    "name": "Fixed Asset",
+    "id": 5600,
+    "category": "Fixed Assets",
+    "difficulty": 2
+  }
+]
