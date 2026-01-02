@@ -6,10 +6,12 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
   protected textObj: Phaser.GameObjects.Text;
   public id: number;
   public isSelected: boolean = false;
+  protected selectedColor: number; // Store custom selected color
 
-  constructor(scene: Phaser.Scene, x: number, y: number, id: number, text: string, color: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, id: number, text: string, color: number, selectedColor?: number) {
     super(scene, x, y);
     this.id = id;
+    this.selectedColor = selectedColor || GameplayConfig.colors.selected; // Use custom or default
 
     this.setSize(GameplayConfig.circleRadius * 2, GameplayConfig.circleRadius * 2);
 
@@ -19,12 +21,9 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
     this.circle.setStrokeStyle(2, GameplayConfig.colors.outline);
     this.add(this.circle);
 
-    // Change outline on hover (only triggers when pointer is inside hitArea)
-    this.on('pointerover', () => this.circle.setStrokeStyle(2, GameplayConfig.colors.outlineHover));
-    this.on('pointerout', () => this.circle.setStrokeStyle(2, GameplayConfig.colors.outline));
-
-    // Draw Text (green)
+    // Draw Text (white by default)
     const textColor = '#' + GameplayConfig.colors.text.toString(16).padStart(6, '0');
+    const textColorHover = '#' + GameplayConfig.colors.outlineHover.toString(16).padStart(6, '0');
     this.textObj = scene.add.text(0, 0, text, {
       fontFamily: 'Orbitron',
       fontSize: '16px',
@@ -35,8 +34,19 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
     });
     this.textObj.setOrigin(0.5);
     // Ensure the text does NOT intercept pointer events so the container remains clickable when hovering over the text
-    if ((this.textObj as any).disableInteractive) (this.textObj as any).disableInteractive();
+    this.textObj.setInteractive = () => this.textObj; // Disable interactivity
+    this.textObj.input = null;
     this.add(this.textObj);
+
+    // Change outline and text color on hover (only triggers when pointer is inside hitArea)
+    this.on('pointerover', () => {
+      this.circle.setStrokeStyle(2, GameplayConfig.colors.outlineHover);
+      this.textObj.setColor(textColorHover);
+    });
+    this.on('pointerout', () => {
+      this.circle.setStrokeStyle(2, GameplayConfig.colors.outline);
+      this.textObj.setColor(textColor);
+    });
 
     // Physics
     scene.physics.world.enable(this);
@@ -77,7 +87,7 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
   public setSelected(selected: boolean) {
     this.isSelected = selected;
     if (selected) {
-      this.circle.setFillStyle(GameplayConfig.colors.selected);
+      this.circle.setFillStyle(this.selectedColor);
       this.scene.tweens.add({
         targets: this,
         scale: 1.08,

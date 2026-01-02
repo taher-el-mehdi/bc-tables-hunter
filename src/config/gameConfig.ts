@@ -4,7 +4,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: window.innerWidth,
   height: window.innerHeight,
-  backgroundColor: '#e7eae7ff', // Light Gray for better contrast
+  backgroundColor: '#0f0f23', // Deep space blue-black
   physics: {
     default: 'arcade',
     arcade: {
@@ -23,13 +23,25 @@ export const GameplayConfig = {
   spawnInterval: 2000, // ms
   maxCircles: 10,
   colors: {
-    table: 0x005A9E, // Microsoft Blue
-    id: 0x00796B,    // Microsoft Red
-    selected: 0xFF8A00, // Microsoft Yellow
-    matched: 0x3CDA5B,  // Microsoft Green
-    outline: 0xffffff,  // White outline (default)
-    outlineHover: 0xFFB900,  // Microsoft Yellow
-    text: 0xFFFFFF        // White for better contrast
+    table: 0x006c7fff, // Bright cyan (Table Names)
+    id: 0xff2e63,    // Vibrant pink/red (Table IDs)
+    selected: 0x01981dff, // Green for table name selection
+    selectedId: 0xff6b9d, // Soft pink for ID selection (lighter pink, easier on eyes)
+    matched: 0x6bffb8,  // Bright mint green
+    outline: 0x2a2a4a,  // Subtle dark purple-gray
+    outlineHover: 0x01981dff,  // Warm amber on hover (softer than bright yellow)
+    text: 0xe8e6e3,        // Soft cream/off-white (easier on eyes than pure white)
+    ui: {
+      primary: 0x00d9ff,   // Cyan for primary UI
+      secondary: 0x8b5cf6, // Purple for secondary elements
+      accent: 0x01981dff,    // Warm amber for accents (softer than bright yellow)
+      success: 0x6bffb8,   // Mint for success states
+      warning: 0xff9f43,   // Orange for warnings
+      danger: 0xff2e63,    // Pink-red for errors/danger
+      textDim: 0x9ca3af,   // Gray for dimmed text
+      background: 0x1a1a2e, // Dark blue-gray background
+      backgroundAlt: 0x16213e // Alternative dark background
+    }
   },
   scoring: {
     base: 10,

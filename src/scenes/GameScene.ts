@@ -88,7 +88,7 @@ export class GameScene extends Phaser.Scene {
     this.matchedText = this.add.text(20, 20, 'Matched: 0', {
       fontFamily: 'Orbitron',
       fontSize: '22px',
-      color: '#' + GameplayConfig.colors.text.toString(16).padStart(6, '0'),
+      color: '#' + GameplayConfig.colors.matched.toString(16).padStart(6, '0'),
       fontStyle: 'bold'
     });
 
@@ -96,7 +96,7 @@ export class GameScene extends Phaser.Scene {
     this.remainingText = this.add.text(20, 48, 'Remaining: 0 ⏳', {
       fontFamily: 'Orbitron',
       fontSize: '18px',
-      color: '#cccccc',
+      color: '#' + GameplayConfig.colors.ui.textDim.toString(16).padStart(6, '0'),
       fontStyle: 'bold'
     });
 
@@ -105,11 +105,11 @@ export class GameScene extends Phaser.Scene {
     const timerHeight = 32;
     const timerX = this.scale.width - 20;
     const timerY = 20;
-    this.timerBg = this.add.rectangle(timerX, timerY, timerWidth, timerHeight, 0x000000, 0.18).setOrigin(1, 0).setStrokeStyle(1, 0x333333);
+    this.timerBg = this.add.rectangle(timerX, timerY, timerWidth, timerHeight, GameplayConfig.colors.ui.backgroundAlt, 0.6).setOrigin(1, 0).setStrokeStyle(2, GameplayConfig.colors.ui.primary, 0.3);
     this.timeText = this.add.text(timerX - timerWidth / 2, timerY + timerHeight / 2, '00:00:00', {
       fontFamily: 'Orbitron',
       fontSize: '16px',
-      color: '#ffffff',
+      color: '#' + GameplayConfig.colors.ui.primary.toString(16).padStart(6, '0'),
       align: 'center',
       fontStyle: 'bold'
     }).setOrigin(0.5);
@@ -117,7 +117,7 @@ export class GameScene extends Phaser.Scene {
     this.messageText = this.add.text(this.scale.width / 2, this.scale.height - 50, '', {
       fontFamily: 'Orbitron',
       fontSize: '24px',
-      color: '#ffaa00',
+      color: '#' + GameplayConfig.colors.ui.accent.toString(16).padStart(6, '0'),
       fontStyle: 'bold'
     }).setOrigin(0.5);
   }

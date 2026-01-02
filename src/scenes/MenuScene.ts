@@ -25,35 +25,37 @@ export class MenuScene extends Phaser.Scene {
       fontFamily: 'Orbitron',
       fontSize: `${titleSize}px`,
       color: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0'),
-      fontStyle: 'bold'
+      fontStyle: 'bold',
+      stroke: '#' + GameplayConfig.colors.ui.secondary.toString(16).padStart(6, '0'),
+      strokeThickness: 3
     }).setOrigin(0.5);
 
     // Subtitle
     this.subtitleText = this.add.text(width / 2, height * 0.4, 'Match Table Name with Table Id', {
       fontFamily: 'Orbitron',
       fontSize: `${subtitleSize}px`,
-      color: '#6b6b6b',
+      color: '#' + GameplayConfig.colors.ui.textDim.toString(16).padStart(6, '0'),
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    // Start button styled with Business Central blue
+    // Start button with vibrant gradient-like styling
     this.startButton = this.add.text(width / 2, height * 0.6, 'Start Game', {
       fontFamily: 'Orbitron',
       fontSize: `${buttonSize}px`,
-      color: '#ffffff',
-      backgroundColor: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0'),
+      color: '#e8e6e3',
+      backgroundColor: '#' + GameplayConfig.colors.ui.secondary.toString(16).padStart(6, '0'),
       padding: { x: Math.round(buttonSize * 0.6), y: Math.round(buttonSize * 0.4) },
       align: 'center',
-      stroke: '#005a9e',
+      stroke: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0'),
       strokeThickness: 2
     }).setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
-        this.startButton.setStyle({ backgroundColor: '#005a9e' });
+        this.startButton.setStyle({ backgroundColor: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0') });
         this.startButton.setScale(1.03);
       })
       .on('pointerout', () => {
-        this.startButton.setStyle({ backgroundColor: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0') });
+        this.startButton.setStyle({ backgroundColor: '#' + GameplayConfig.colors.ui.secondary.toString(16).padStart(6, '0') });
         this.startButton.setScale(1);
       })
       .on('pointerdown', () => this.scene.start('GameScene'));
@@ -66,8 +68,8 @@ export class MenuScene extends Phaser.Scene {
     this.muteButton = this.add.text(muteX, muteY, audio.isMuted() ? '🔇' : '🔊', {
       fontFamily: 'Orbitron',
       fontSize: `${mbFontSize}px`,
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.18)',
+      color: '#' + GameplayConfig.colors.ui.accent.toString(16).padStart(6, '0'),
+      backgroundColor: '#' + GameplayConfig.colors.ui.backgroundAlt.toString(16).padStart(6, '0') + '99',
       padding: { x: 8, y: 6 }
     }).setOrigin(0, 1).setInteractive({ useHandCursor: true });
 
