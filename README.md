@@ -1,88 +1,129 @@
-# AL Objects Hunter
+# 🎯 AL Objects Hunter
 
-A web-based educational game to help Microsoft Dynamics 365 Business Central developers memorize tables and IDs.
+> **Are you ready to become a Business Central Master?** 🚀
 
-## 🎮 How to Play
+Turn those boring BC table IDs into an **EPIC MEMORY GAME**! Chase down floating circles, match tables with their IDs, and prove you're the ultimate Dynamics 365 Business Central developer! 💪
 
-**Quick overview**
+![Menu Screen](imgs/menu.png)
 
-- **Objective**: Match floating **Table Name** circles (Blue) with their corresponding **Table ID** circles (Red). Each pair represents the same table from `src/data/tables.json`.
+## 🎮 Game On! How to Play
 
-**Controls**
+Welcome to the arena, developer! Your mission: **Hunt down and match those BC tables!** 🎪
 
-- **Click / Tap** a circle to select it. Selecting a Table Name will show "Select the ID!" and selecting an ID will show "Select the Table Name!".
-- Click the matching counterpart to attempt a match.
-- Click the same circle again to deselect it.
-- Clicking two circles of the same type (two Table Names or two IDs) is ignored.
+![Gameplay](imgs/game.png)
 
-**Scoring**
+### 🎯 Your Mission
+Match the **Blue circles** (Table Names) with their **Red circles** (Table IDs) before time runs out! Every table is based on real Business Central data from `src/data/tables.json`.
 
-- **Base points**: 10 points per correct match.
-- **Speed bonus**: +10 points if you match within **1.5s**, or +5 points if within **3.0s** (measured from your first selection).
-- **Streak multiplier**: 1.5× multiplier when streak ≥ 3; 2.0× when streak ≥ 5.
-- **Wrong match**: streak resets to 0 (no point penalty).
+### 🕹️ Controls (It's Super Easy!)
+- **👆 Click/Tap** any circle to select it
+  - Pick a **Blue one** → You'll see "Select the ID!"
+  - Pick a **Red one** → You'll see "Select the Table Name!"
+- **👆 Click** the matching partner to score! 
+- **Changed your mind?** Click the same circle again to deselect
+- **Pro tip**: You can't select two blues or two reds at once (we're not *that* evil 😉)
 
-**UI elements**
+### 💰 Score Like a Boss!
+Want to top the leaderboard? Here's how the magic happens:
 
-- `Score` — current score (top-left).
-- `Matched` / `Remaining` — how many tables you've matched and how many are left.
-- `Messages` — short feedback at the bottom (e.g., "Matched!", "Wrong Match!").
+- **🎁 Base Score**: 10 points for each correct match
+- **⚡ Speed Demon Bonus**: 
+  - Match in **under 1.5 seconds** → +10 bonus points! 🔥
+  - Match in **under 3.0 seconds** → +5 bonus points! ⚡
+- **🔥 Streak Multiplier** (THIS IS WHERE IT GETS CRAZY!):
+  - **3 correct in a row** → 1.5× multiplier! 
+  - **5 correct in a row** → 2.0× multiplier! 💥
+  - Miss once? Streak resets to 0 (but no points lost, we're nice like that)
 
-**Tips & notes**
+**🧮 Example:** Correct match (10) + Speed bonus (10) × Streak multiplier (2.0) = **40 POINTS!** 🎊
 
-- Aim to match quickly (under **1.5s**) to get the highest speed bonus.
-- Build a streak of correct matches to increase your multiplier (up to **2×** at 5 correct in a row).
-- Circles move and bounce inside the game area — time your selection to avoid collisions.
+### 📊 Your Dashboard
+Keep an eye on these stats:
+- **Score** 💯 — How awesome you're doing (top-left)
+- **Matched/Remaining** 🎯 — Tables conquered vs. tables left to hunt
+- **Messages** 💬 — Real-time feedback (bottom of screen) like "MATCHED! 🎉" or "Oops, Wrong Match! 😅"
 
-**Game flow**
+### 🏆 Pro Tips from the Champions
+- **Speed is life!** Match under 1.5s for maximum points
+- **Build that streak!** 5 in a row = 2× MULTIPLIER BABY! 🚀
+- **Watch those circles bounce!** They won't wait for you
+- **Stay focused!** One wrong match kills your precious streak 😱
 
-- Pairs spawn periodically (see `src/config/gameConfig.ts`) until all tables from `src/data/tables.json` have been matched.
-- When all pairs are matched, no more spawns will occur and your final score is displayed in the UI.
+### 🎪 Game Flow
+- Circles spawn automatically throughout the game
+- All tables from your data file will eventually appear
+- Match them all to complete the game and see your FINAL SCORE! 🏅
+- Can you beat your high score? Challenge accepted! 💪
 
 
 
-## 🚀 How to Run
+## 🚀 Ready to Play? Let's GO!
 
-1.  **Install Dependencies**:
+**3 Simple Steps to Start Hunting:**
+
+1.  **📦 Grab the Goods**:
     ```bash
     npm install
     ```
 
-2.  **Start Development Server**:
+2.  **🔥 Fire Up the Game**:
     ```bash
     npm run dev
     ```
 
-3.  Open the browser at the provided local URL (usually `http://localhost:5173`).
+3.  **🎮 Open Your Browser** and go to `http://localhost:5173`
 
-## 🛠 Project Structure
+**BOOM!** You're in the game! 💥
 
-*   `src/scenes/`: Phaser scenes (Boot, Menu, Game).
-*   `src/objects/`: Game entities (Circles).
-*   `src/services/`: Game logic (ScoreService).
-*   `src/data/`: Game data (tables.json).
-*   `src/config/`: Configuration files.
+## 🛠 Under the Hood (For the Curious Devs)
 
-## 📝 How to Extend
+```
+📁 bc-al-objects-hunter/
+├── 🎬 src/scenes/         → Where the magic happens (Boot, Menu, Game)
+├── ⚪ src/objects/         → Circle entities that bounce around
+├── 🎯 src/services/        → Game logic & scoring wizardry
+├── 📊 src/data/           → tables.json (Your BC knowledge base!)
+└── ⚙️  src/config/         → Game configuration & settings
+```
 
-### Adding New Tables
-Edit `src/data/tables.json` and add a new entry:
+## 🎨 Want to Customize? Make It YOUR Game!
+
+### 🆕 Adding More Tables (Expand Your Empire!)
+Open `src/data/tables.json` and throw in some new challenges:
 
 ```json
 {
-  "name": "My New Table",
+  "name": "My Awesome Custom Table",
   "id": 50000,
-  "category": "Custom",
+  "category": "Custom Objects",
   "difficulty": 1
 }
 ```
+Save it, refresh, and BOOM! New hunting targets! 🎯
 
-### Adding New Levels or Features
-*   **Levels**: Create a new Scene (e.g., `Level2Scene.ts`) and add logic in `ScoreService` to handle progression.
-*   **Multiplayer**: The `ScoreService` is designed to be decoupled. You can move the validation logic to a Node.js backend and communicate via WebSockets.
+### 🚀 Level Up the Game (For the Ambitious!)
+Want to make it even MORE epic? Here are some ideas:
 
-## 👨‍💻 Tech Stack
+- **🌟 Multiple Levels**: Create `Level2Scene.ts`, add boss battles, unlock achievements!
+- **👥 Multiplayer Mode**: Take `ScoreService` to a Node.js backend, add WebSockets, and challenge your team!
+- **🎵 Custom Music**: Swap out audio files and make it YOUR vibe
+- **🏆 Leaderboards**: Connect to a database and track global high scores
+- **🎪 Power-ups**: Slow-motion mode? Extra time? You decide!
 
-*   Phaser 3
-*   TypeScript
-*   Vite
+**The world is your playground!** 🌍
+
+## 👨‍💻 Built With Love Using
+
+- **🎮 Phaser 3** — The game engine that makes magic happen
+- **📘 TypeScript** — Because we like our code typed and tight
+- **⚡ Vite** — Lightning-fast builds and hot reload
+
+---
+
+## 🎉 Ready to Hunt?
+
+**Start the game, chase those circles, and show us what you've got!** 🏆
+
+*Built with 💙 for the Business Central Developer Community*
+
+**Happy Hunting! 🎯**
