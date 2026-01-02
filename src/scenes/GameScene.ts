@@ -203,7 +203,6 @@ export class GameScene extends Phaser.Scene {
       try { AudioService.getInstance().playSelectSound(); } catch (e) {}
       // Disable other circles of the same type to avoid other selections
       this.setSameTypeDisabled(circle.constructor, true, circle);
-      this.showMessage(circle instanceof TableCircle ? "Select the ID!" : "Select the Table Name!");
       return;
     }
 

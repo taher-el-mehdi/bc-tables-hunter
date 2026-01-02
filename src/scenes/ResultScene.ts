@@ -3,7 +3,6 @@ import { GameplayConfig } from '../config/gameConfig';
 
 export class ResultScene extends Phaser.Scene {
   private retryBtn!: Phaser.GameObjects.Text;
-  private menuBtn!: Phaser.GameObjects.Text;
 
   constructor() {
     super('ResultScene');
@@ -39,7 +38,7 @@ export class ResultScene extends Phaser.Scene {
     this.add.text(width / 2, height * 0.45, `Matched: ${data.matched}`, {
       fontFamily: 'Orbitron',
       fontSize: `${resultSize}px`,
-      color: '#' + GameplayConfig.colors.ui.accent.toString(16).padStart(6, '0'),
+      color: '#' + GameplayConfig.colors.matched.toString(16).padStart(6, '0'),
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
@@ -50,19 +49,20 @@ export class ResultScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    // Buttons with new color scheme
-    this.retryBtn = this.add.text(width / 2 - 100, height * 0.7, 'Play Again', {
+    // Play Again button centered
+    this.retryBtn = this.add.text(width / 2, height * 0.7, 'Play Again', {
       fontFamily: 'Orbitron',
       fontSize: `${btnSize}px`,
       color: '#e8e6e3',
       backgroundColor: '#' + GameplayConfig.colors.ui.secondary.toString(16).padStart(6, '0'),
       padding: { x: Math.round(btnSize * 0.6), y: Math.round(btnSize * 0.4) },
-      stroke: '#' + GameplayConfig.colors.matched.toString(16).padStart(6, '0'),
+      align: 'center',
+      stroke: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0'),
       strokeThickness: 2
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
     this.retryBtn.on('pointerover', () => {
-      this.retryBtn.setStyle({ backgroundColor: '#' + GameplayConfig.colors.matched.toString(16).padStart(6, '0') });
+      this.retryBtn.setStyle({ backgroundColor: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0') });
       this.retryBtn.setScale(1.03);
     });
     this.retryBtn.on('pointerout', () => {
@@ -71,28 +71,6 @@ export class ResultScene extends Phaser.Scene {
     });
     this.retryBtn.on('pointerdown', () => {
       this.scene.start('GameScene');
-    });
-
-    this.menuBtn = this.add.text(width / 2 + 100, height * 0.7, 'Main Menu', {
-      fontFamily: 'Orbitron',
-      fontSize: `${btnSize}px`,
-      color: '#e8e6e3',
-      backgroundColor: '#' + GameplayConfig.colors.ui.backgroundAlt.toString(16).padStart(6, '0'),
-      padding: { x: Math.round(btnSize * 0.6), y: Math.round(btnSize * 0.4) },
-      stroke: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0'),
-      strokeThickness: 2
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-    this.menuBtn.on('pointerover', () => {
-      this.menuBtn.setStyle({ backgroundColor: '#' + GameplayConfig.colors.table.toString(16).padStart(6, '0') });
-      this.menuBtn.setScale(1.03);
-    });
-    this.menuBtn.on('pointerout', () => {
-      this.menuBtn.setStyle({ backgroundColor: '#' + GameplayConfig.colors.ui.backgroundAlt.toString(16).padStart(6, '0') });
-      this.menuBtn.setScale(1);
-    });
-    this.menuBtn.on('pointerdown', () => {
-      this.scene.start('MenuScene');
     });
 
     // Responsive adjustments
@@ -105,11 +83,8 @@ export class ResultScene extends Phaser.Scene {
 
     const btnSize = Math.round(small / 22);
 
-    // update buttons positions and sizes
+    // update button position and size
     this.retryBtn.setStyle({ fontSize: `${btnSize}px`, padding: { x: Math.round(btnSize * 0.6), y: Math.round(btnSize * 0.4) } });
-    this.retryBtn.setPosition(width / 2 - 100, height * 0.7);
-
-    this.menuBtn.setStyle({ fontSize: `${btnSize}px`, padding: { x: Math.round(btnSize * 0.6), y: Math.round(btnSize * 0.4) } });
-    this.menuBtn.setPosition(width / 2 + 100, height * 0.7);
+    this.retryBtn.setPosition(width / 2, height * 0.7);
   }
 }

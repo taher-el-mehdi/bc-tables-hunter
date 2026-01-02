@@ -9,7 +9,7 @@ import './style.css'; // Assuming vite style import
 
 const config = {
   ...GameConfig,
-  scene: [BootScene, MenuScene, GameScene,ResultScene]
+  scene: [ResultScene, BootScene, MenuScene, GameScene]
 };
 
 new Phaser.Game(config);
