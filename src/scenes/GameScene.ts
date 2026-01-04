@@ -357,17 +357,6 @@ export class GameScene extends Phaser.Scene {
     this.remainingText.setText(`Remaining: ${remaining}`);
   }
 
-  private showMessage(msg: string) {
-    this.messageText.setText(msg);
-    this.messageText.alpha = 1;
-    this.tweens.add({
-      targets: this.messageText,
-      alpha: 0,
-      delay: 1000,
-      duration: 500
-    });
-  }
-
   private updateTimer() {
     const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
     const hours = Math.floor(elapsed / 3600);
