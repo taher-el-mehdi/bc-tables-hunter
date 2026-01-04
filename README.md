@@ -2,6 +2,20 @@
 
 > **Are you ready to become a Business Central Master?** 🚀
 
+## 🤔 What is this?
+
+**AL Objects Hunter** is an interactive browser-based memory game designed specifically for Microsoft Dynamics 365 Business Central developers. The game helps you learn and memorize Business Central table names and their corresponding IDs through engaging gameplay.
+
+**Built with Phaser 3, TypeScript, and Vite**, this educational game transforms the tedious task of memorizing BC table structures into an exciting challenge where you match floating circles containing table names (blue) with their ID numbers (red). Perfect for developers looking to improve their BC knowledge while having fun!
+
+**🎯 Key Features:**
+- 📚 **Educational**: Learn real Business Central table names and IDs
+- 🎮 **Engaging Gameplay**: Physics-based circles that bounce around the screen
+- 🏆 **Score System**: Earn points with speed bonuses and streak multipliers
+- 📱 **Responsive Design**: Works on desktop and mobile devices
+- 🎵 **Audio Feedback**: Sound effects for matches, collisions, and achievements
+- 📊 **Progress Tracking**: See your matched vs. remaining tables in real-time
+
 Turn those boring BC table IDs into an **EPIC MEMORY GAME**! Chase down floating circles, match tables with their IDs, and prove you're the ultimate Dynamics 365 Business Central developer! 💪
 
 ![Menu Screen](imgs/menu.png)
