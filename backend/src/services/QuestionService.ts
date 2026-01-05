@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { env } from '../config/env';
-import { DifficultyMap, type Rarity } from '../config/constants';
+import { env } from '../config/env.js';
+import { DifficultyMap, type Rarity } from '../config/constants.js';
 import type { Question } from '../types/index.js';
 
 let questions: Question[] = [];

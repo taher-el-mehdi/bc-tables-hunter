@@ -2,10 +2,10 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #0f0f23; /* Deep space blue-black */
+  background-color: #0f0f23;
   font-family: 'Orbitron', monospace;
   font-weight: 700;
-  touch-action: manipulation; /* improve touch interactions on mobile */
+  touch-action: manipulation;
 }
 
 canvas {

@@ -1,6 +1,6 @@
 import type { Server, Socket } from 'socket.io';
-import { RoomService } from '../services/RoomService';
-import { GameService } from '../services/GameService';
+import { RoomService } from '../services/RoomService.js';
+import { GameService } from '../services/GameService.js';
 
 export function registerSocketHandlers(io: Server) {
   io.on('connection', (socket: Socket) => {
@@ -27,6 +27,14 @@ export function registerSocketHandlers(io: Server) {
     socket.on('submit_answer', ({ code, playerId, answerId }) => {
       try {
         GameService.submitAnswer(io, code, playerId, Number(answerId));
+      } catch (err: any) {
+        socket.emit('error', { error: err.message });
+      }
+    });
+
+    socket.on('bubble_click', ({ code, playerId, pairId, kind }) => {
+      try {
+        GameService.handleBubbleClick(io, code, playerId, { pairId: Number(pairId), kind });
       } catch (err: any) {
         socket.emit('error', { error: err.message });
       }

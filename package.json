@@ -1,21 +1,10 @@
 {
-  "name": "bc-al-objects-hunter",
+  "name": "bc-tables-hunter-monorepo",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
-  "homepage": "https://taher-el-mehdi.github.io/bc-tables-hunter/",
+  "workspaces": ["frontend", "backend"],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "deploy": "gh-pages -d dist",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "gh-pages": "^6.3.0",
-    "typescript": "~5.9.3",
-    "vite": "^7.2.4"
-  },
-  "dependencies": {
-    "phaser": "^3.90.0"
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:backend": "npm run dev -w backend"
   }
 }

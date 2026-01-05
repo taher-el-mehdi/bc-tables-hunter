@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { env } from '../config/env';
+import { env } from '../config/env.js';
 import type { RoomState, Player } from '../types/index.js';
 
 const rooms = new Map<string, RoomState>();
@@ -36,7 +36,7 @@ export const RoomService = {
     if (room.players.length >= room.maxPlayers) throw Object.assign(new Error('Room full'), { status: 400 });
     if (room.status !== 'lobby') throw Object.assign(new Error('Game already started'), { status: 400 });
 
-    const player: Player = { id: uuidv4(), name, score: 0, streak: 0, isHost: false, sound };
+    const player: Player = { id: uuidv4(), name, score: 0, streak: 0, isHost: false, sound, matches: 0, wrong: 0 };
     room.players.push(player);
 
     if (!room.hostId) {
@@ -75,5 +75,11 @@ export const RoomService = {
     const room = rooms.get(code);
     if (!room) throw Object.assign(new Error('Room not found'), { status: 404 });
     room.currentQuestion = q;
+  },
+
+  setPairs(code: string, pairs: NonNullable<RoomState['pairs']>) {
+    const room = rooms.get(code);
+    if (!room) throw Object.assign(new Error('Room not found'), { status: 404 });
+    room.pairs = pairs;
   },
 };

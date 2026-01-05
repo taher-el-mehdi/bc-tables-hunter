@@ -37,7 +37,13 @@ cp .env.example .env
 npm run dev
 ```
 
-Server defaults: PORT 8080, CORS from Vite at http://localhost:5173.
+Server defaults: PORT 8080 (with automatic fallback to 3001/8081/4000/5001 if blocked), CORS from Vite at http://localhost:5173.
+
+If the server starts on a different port (e.g. 8081), update the frontend env:
+```bash
+cp frontend/.env.example frontend/.env
+# then edit frontend/.env to match the printed backend URL
+```
 
 ## Persistence (optional)
 Set `MONGO_URL` and `PERSIST_ENABLED=true` to enable saving matches, players, and stats.

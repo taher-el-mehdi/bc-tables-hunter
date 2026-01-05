@@ -5,6 +5,8 @@ export type Player = {
   streak: number;
   isHost: boolean;
   sound?: { music?: boolean; sfx?: boolean };
+  matches?: number;
+  wrong?: number;
 };
 
 export type Question = {
@@ -24,4 +26,5 @@ export type RoomState = {
   totalRounds: number;
   roundEndsAt?: number;
   currentQuestion?: Question;
+  pairs?: { id: number; name: string; matched: boolean }[];
 };

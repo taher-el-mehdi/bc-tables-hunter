@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import type { Server } from 'socket.io';
-import { RoomService } from '../services/RoomService';
-import { GameService } from '../services/GameService';
+import { RoomService } from '../services/RoomService.js';
+import { GameService } from '../services/GameService.js';
 
 export function RoomsController(io: Server) {
   return {

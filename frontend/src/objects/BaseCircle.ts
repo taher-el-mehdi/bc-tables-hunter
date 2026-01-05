@@ -6,24 +6,22 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
   protected textObj: Phaser.GameObjects.Text;
   public id: number;
   public isSelected: boolean = false;
-  protected selectedColor: number; // Store custom selected color
+  protected selectedColor: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, id: number, text: string, color: number, selectedColor?: number) {
     super(scene, x, y);
     this.id = id;
-    this.selectedColor = selectedColor || GameplayConfig.colors.selected; // Use custom or default
+    this.selectedColor = selectedColor || GameplayConfig.colors.selected;
 
     this.setSize(GameplayConfig.circleRadius * 2, GameplayConfig.circleRadius * 2);
 
-    // Draw Circle
     this.circle = scene.add.circle(0, 0, GameplayConfig.circleRadius, color);
-    // Default outline (white)
     this.circle.setStrokeStyle(2, GameplayConfig.colors.outline);
     this.add(this.circle);
 
-    // Draw Text (white by default)
-    const textColor = '#' + GameplayConfig.colors.text.toString(16).padStart(6, '0');
-    const textColorHover = '#' + GameplayConfig.colors.outlineHover.toString(16).padStart(6, '0');
+    const textColor = '#' + (GameplayConfig.colors.text & 0xFFFFFF).toString(16).padStart(6, '0');
+    const hoverOutline = (GameplayConfig.colors.outlineHover & 0xFFFFFF);
+    const textColorHover = '#' + hoverOutline.toString(16).padStart(6, '0');
     this.textObj = scene.add.text(0, 0, text, {
       fontFamily: 'Orbitron',
       fontSize: '16px',
@@ -33,14 +31,12 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
       wordWrap: { width: GameplayConfig.circleRadius * 1.5 }
     });
     this.textObj.setOrigin(0.5);
-    // Ensure the text does NOT intercept pointer events so the container remains clickable when hovering over the text
-    this.textObj.setInteractive = () => this.textObj; // Disable interactivity
-    this.textObj.input = null;
+    this.textObj.setInteractive = () => this.textObj;
+    (this.textObj as any).input = null;
     this.add(this.textObj);
 
-    // Change outline and text color on hover (only triggers when pointer is inside hitArea)
     this.on('pointerover', () => {
-      this.circle.setStrokeStyle(2, GameplayConfig.colors.outlineHover);
+      this.circle.setStrokeStyle(2, hoverOutline);
       this.textObj.setColor(textColorHover);
     });
     this.on('pointerout', () => {
@@ -48,39 +44,37 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
       this.textObj.setColor(textColor);
     });
 
-    // Physics
     scene.physics.world.enable(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setCircle(GameplayConfig.circleRadius);
     body.setCollideWorldBounds(true);
-    // Softer bounce and damping for smoother, more natural motion
-    body.setBounce(0.9, 0.9);
+    // Softer motion but enough bounce to avoid overlap on collisions
+    body.setBounce(0.6, 0.6);
     body.setDamping(true);
-    body.setDrag(20);
-    body.setMaxVelocity(160);
-    
-    // Random gentle velocity (slightly increased for snappier motion)
-    const speed = Math.max(36, Math.round(GameplayConfig.circleRadius * 1.0));
+    body.setDrag(80);
+    body.setMaxVelocity(90);
+
+    // Lower initial velocity for easier clicking
+    const speed = Math.max(16, Math.round(GameplayConfig.circleRadius * 0.4));
     body.setVelocity(
-      Phaser.Math.Between(-speed, speed), 
+      Phaser.Math.Between(-speed, speed),
       Phaser.Math.Between(-speed, speed)
     );
 
-    // Flow seed to vary motion per circle
     (this as any)._flowSeed = Phaser.Math.FloatBetween(0, Math.PI * 2);
-    (this as any)._flowFreq = Phaser.Math.FloatBetween(0.2, 0.6);
-    (this as any)._flowAmp = Phaser.Math.FloatBetween(0.05, 0.25);
+    (this as any)._flowFreq = Phaser.Math.FloatBetween(0.1, 0.3);
+    (this as any)._flowAmp = Phaser.Math.FloatBetween(0.03, 0.08);
 
-    // Interaction - precise circular hit area, hand cursor handled by Phaser
     const isTouch = (scene.sys.game as any).device && (scene.sys.game as any).device.input && (scene.sys.game as any).device.input.touch;
-    const hitRadius = GameplayConfig.circleRadius + (isTouch ? 8 : 0);
+    const hitRadius = GameplayConfig.circleRadius + (isTouch ? 16 : 16);
     this.setInteractive({
       hitArea: new Phaser.Geom.Circle(0, 0, hitRadius),
       hitAreaCallback: Phaser.Geom.Circle.Contains,
       useHandCursor: !isTouch
     });
 
-    // Add to scene
+    // Keep movement on click; selection is visual only (handled externally)
+
     scene.add.existing(this);
   }
 
@@ -88,17 +82,11 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
     this.isSelected = selected;
     if (selected) {
       this.circle.setFillStyle(this.selectedColor);
-      this.scene.tweens.add({
-        targets: this,
-        scale: 1.08,
-        duration: 150,
-        yoyo: true,
-        repeat: -1
-      });
+      const accent = (GameplayConfig.colors.outlineHover & 0xFFFFFF);
+      this.circle.setStrokeStyle(3, accent);
     } else {
       this.resetColor();
-      this.setScale(1);
-      this.scene.tweens.killTweensOf(this);
+      this.circle.setStrokeStyle(2, GameplayConfig.colors.outline);
     }
   }
 
@@ -120,8 +108,9 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
       this.disableInteractive();
       this.setAlpha(0.6);
     } else {
+      const hitRadius = GameplayConfig.circleRadius + 16;
       this.setInteractive({
-        hitArea: new Phaser.Geom.Circle(0, 0, GameplayConfig.circleRadius),
+        hitArea: new Phaser.Geom.Circle(0, 0, hitRadius),
         hitAreaCallback: Phaser.Geom.Circle.Contains,
         useHandCursor: true
       });
@@ -129,7 +118,6 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
     }
   }
 
-  // Smooth flow nudge to make movement feel organic
   public applyFlow(time: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
     if (!body) return;
@@ -138,20 +126,17 @@ export abstract class BaseCircle extends Phaser.GameObjects.Container {
     const freq = (this as any)._flowFreq || 0.4;
     const amp = (this as any)._flowAmp || 0.12;
 
-    // small oscillation angle in radians
     const t = time / 1000;
     const angle = Math.sin(t * freq + seed) * amp;
 
     const vx = body.velocity.x;
     const vy = body.velocity.y;
 
-    // rotate the velocity vector slightly and lerp towards it for smoothness
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     const desiredX = vx * cos - vy * sin;
     const desiredY = vx * sin + vy * cos;
 
-    // small lerp to avoid popping
     const lerp = 0.06;
     body.setVelocity(Phaser.Math.Linear(vx, desiredX, lerp), Phaser.Math.Linear(vy, desiredY, lerp));
   }

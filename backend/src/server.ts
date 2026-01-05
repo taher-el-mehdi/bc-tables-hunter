@@ -3,11 +3,11 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
-import { env } from './config/env';
-import { rateLimiter } from './middleware/rateLimit';
-import { errorHandler } from './middleware/errorHandler';
-import roomsRouter from './routes/rooms.routes';
-import { registerSocketHandlers } from './sockets/events';
+import { env } from './config/env.js';
+import { rateLimiter } from './middleware/rateLimit.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import roomsRouter from './routes/rooms.routes.js';
+import { registerSocketHandlers } from './sockets/events.js';
 
 export function createServer() {
   const app = express();
@@ -30,6 +30,5 @@ export function createServer() {
   app.use(errorHandler);
 
   registerSocketHandlers(io);
-
   return { app, httpServer, io };
 }
