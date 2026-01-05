@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BC Tables Hunter — Admin</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; color: #222; }
+    header { display:flex; align-items:center; gap:8px; margin-bottom: 16px; }
+    input, button { padding: 8px 10px; font-size: 14px; }
+    button { cursor: pointer; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; background: #fafafa; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; }
+    h2 { margin: 6px 0 12px; font-size: 16px; }
+    .muted { color: #777; }
+    .row { display:flex; gap:8px; align-items:center; }
+    .list { max-height: 320px; overflow:auto; }
+    .pill { display:inline-block; background:#e8f3ff; color:#0366d6; padding:2px 6px; border-radius: 12px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="font-size:18px; margin:0;">Admin Dashboard</h1>
+    <span class="muted">Monitor rooms, players, and leaderboard</span>
+  </header>
+
+  <section class="row" style="margin-bottom:12px;">
+    <label>Admin User <input id="user" placeholder="admin" /></label>
+    <label>Admin Pass <input id="pass" type="password" placeholder="••••••" /></label>
+    <label>API URL <input id="api" value="http://localhost:3001" /></label>
+    <button id="connect">Connect</button>
+  </section>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Rooms</h2>
+      <div class="row" style="margin-bottom:8px;">
+        <button id="refreshRooms">Refresh Rooms</button>
+      </div>
+      <div id="rooms" class="list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Leaderboard (Top 20)</h2>
+      <div class="row" style="margin-bottom:8px;">
+        <button id="refreshLb">Refresh Leaderboard</button>
+      </div>
+      <div id="leaderboard" class="list"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2>Room Details</h2>
+    <div id="roomDetails" class="list">
+      <div class="muted">Select a room to see details.</div>
+    </div>
+  </div>
+
+  <script>
+    let AUTH = '';
+    let API = 'http://localhost:3001';
+
+    function authHeader() {
+      return { 'Authorization': AUTH };
+    }
+
+    function setStatus(el, text) {
+      el.innerHTML = `<div class="muted">${text}</div>`;
+    }
+
+    function fmtScore(n) { return typeof n === 'number' ? n.toFixed(0) : '0'; }
+
+    document.getElementById('connect').addEventListener('click', () => {
+      const u = document.getElementById('user').value || 'admin';
+      const p = document.getElementById('pass').value || '';
+      const a = document.getElementById('api').value || 'http://localhost:3001';
+      AUTH = 'Basic ' + btoa(`${u}:${p}`);
+      API = a;
+      localStorage.setItem('admin_api', API);
+      localStorage.setItem('admin_auth', AUTH);
+      alert('Auth set. You can refresh rooms or leaderboard.');
+    });
+
+    // restore
+    (function() {
+      const api = localStorage.getItem('admin_api');
+      const auth = localStorage.getItem('admin_auth');
+      if (api) document.getElementById('api').value = api, API = api;
+      if (auth) AUTH = auth;
+    })();
+
+    async function loadRooms() {
+      const container = document.getElementById('rooms');
+      setStatus(container, 'Loading rooms...');
+      try {
+        const res = await fetch(`${API}/admin/rooms`, { headers: authHeader() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rooms = await res.json();
+        if (!Array.isArray(rooms) || rooms.length === 0) {
+          setStatus(container, 'No rooms found.');
+          return;
+        }
+        const rows = rooms.map(r => (
+          `<div style="padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong>${r.code}</strong>
+              <span class="pill" style="margin-left:6px;">${r.status}</span>
+              <span class="muted" style="margin-left:10px;">Players: ${r.playersCount}</span>
+            </div>
+            <button data-code="${r.code}">Open</button>
+          </div>`
+        )).join('');
+        container.innerHTML = rows;
+        container.querySelectorAll('button[data-code]').forEach(btn => {
+          btn.addEventListener('click', () => openRoom(btn.getAttribute('data-code')));
+        });
+      } catch (e) {
+        setStatus(container, 'Failed to load rooms. Check API/Auth.');
+      }
+    }
+
+    async function openRoom(code) {
+      const container = document.getElementById('roomDetails');
+      setStatus(container, `Loading room ${code}...`);
+      try {
+        const res = await fetch(`${API}/admin/rooms/${code}`, { headers: authHeader() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const r = await res.json();
+        const players = (r.players || []).map(p => (
+          `<tr><td>${p.name}</td><td>${fmtScore(p.score)}</td><td>${p.online ? 'online' : 'offline'}</td></tr>`
+        )).join('');
+        container.innerHTML = `
+          <div style="margin-bottom:6px;">
+            <strong>${r.code}</strong>
+            <span class="pill" style="margin-left:6px;">${r.status}</span>
+          </div>
+          <table>
+            <thead><tr><th>Name</th><th>Score</th><th>Status</th></tr></thead>
+            <tbody>${players || '<tr><td colspan="3" class="muted">No players</td></tr>'}</tbody>
+          </table>
+        `;
+      } catch (e) {
+        setStatus(container, 'Failed to load room.');
+      }
+    }
+
+    async function loadLeaderboard() {
+      const container = document.getElementById('leaderboard');
+      setStatus(container, 'Loading leaderboard...');
+      try {
+        const res = await fetch(`${API}/admin/leaderboard`, { headers: authHeader() });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const top = (data.topPlayers || []).map((p, i) => (
+          `<tr><td>${i+1}</td><td>${p.name}</td><td>${fmtScore(p.score)}</td></tr>`
+        )).join('');
+        container.innerHTML = `
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Score</th></tr></thead>
+            <tbody>${top || '<tr><td colspan="3" class="muted">No players</td></tr>'}</tbody>
+          </table>
+        `;
+      } catch (e) {
+        setStatus(container, 'Failed to load leaderboard.');
+      }
+    }
+
+    document.getElementById('refreshRooms').addEventListener('click', loadRooms);
+    document.getElementById('refreshLb').addEventListener('click', loadLeaderboard);
+  </script>
+</body>
+</html>

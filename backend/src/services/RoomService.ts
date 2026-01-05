@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { env } from '../config/env.js';
 import type { RoomState, Player } from '../types/index.js';
+import { RoomModel } from '../models/Room.js';
 
 const rooms = new Map<string, RoomState>();
 
@@ -23,6 +24,8 @@ export const RoomService = {
       currentQuestion: undefined,
     };
     rooms.set(code, room);
+    // Persist initial room if persistence enabled
+    this._persist(room);
     return room;
   },
 
@@ -43,7 +46,7 @@ export const RoomService = {
       room.hostId = player.id;
       player.isHost = true;
     }
-
+    this._persist(room);
     return player;
   },
 
@@ -53,10 +56,23 @@ export const RoomService = {
     return room;
   },
 
+  removePlayer(code: string, playerId: string) {
+    const room = rooms.get(code);
+    if (!room) return;
+    const idx = room.players.findIndex(p => p.id === playerId);
+    if (idx >= 0) room.players.splice(idx, 1);
+    if (room.hostId === playerId) {
+      room.hostId = room.players[0]?.id;
+      if (room.players[0]) room.players[0].isHost = true;
+    }
+    this._persist(room);
+  },
+
   setStatus(code: string, status: RoomState['status']) {
     const room = rooms.get(code);
     if (!room) throw Object.assign(new Error('Room not found'), { status: 404 });
     room.status = status;
+    this._persist(room);
   },
 
   setRound(code: string, round: number) {
@@ -81,5 +97,29 @@ export const RoomService = {
     const room = rooms.get(code);
     if (!room) throw Object.assign(new Error('Room not found'), { status: 404 });
     room.pairs = pairs;
+    this._persist(room);
+  },
+
+  // Fire-and-forget persistence of room state
+  async _persist(room: RoomState) {
+    try {
+      if (!env.PERSIST_ENABLED) return;
+      const players = room.players.map(p => ({ playerId: p.id, name: p.name, score: p.score, online: true }));
+      await RoomModel.updateOne(
+        { code: room.code },
+        { $set: { code: room.code, status: room.status, playersCount: room.players.length, players } },
+        { upsert: true }
+      );
+    } catch (e) {
+      // swallow errors to avoid impacting gameplay
+      // console.warn('Persist room failed', e);
+    }
+  },
+
+  sync(code: string) {
+    const room = rooms.get(code);
+    if (!room) return;
+    // no await; fire-and-forget
+    this._persist(room);
   },
 };

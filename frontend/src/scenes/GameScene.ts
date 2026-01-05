@@ -67,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(20);
 
     // Subscribe to server events
-    this.client.on('room_state', ({ pairs, players }) => {
+    this.client.onStandard('game:update_bubbles', ({ pairs, players }) => {
       // Build circles deterministically from pairs order
       pairs.forEach((p: PairItem, i: number) => {
         const idC = new IdCircle(this, 0, 0, i * 2 + 1, p.id);
@@ -87,7 +87,7 @@ export default class GameScene extends Phaser.Scene {
     // Fallback: fetch room state if socket event was missed
     this.fetchRoomState();
 
-    this.client.on('pair_matched', ({ playerId, pairId }) => {
+    this.client.onStandard('game:match', ({ playerId, pairId }) => {
       const idC = this.idMap.get(pairId);
       const nameC = this.nameMap.get(pairId);
       if (idC && nameC) {
@@ -104,7 +104,14 @@ export default class GameScene extends Phaser.Scene {
       else if (selection && selection.kind === 'name') this.nameMap.get(selection.pairId)?.setSelected(true);
     });
 
-    this.client.on('leaderboard_update', ({ players }) => {
+    this.client.onStandard('leaderboard:update', ({ players }) => {
+      this.updateLeaderboard(players);
+    });
+
+    this.client.onStandard('game:mismatch', ({ playerId }) => {
+      if (playerId === this.playerId) {
+        this.showFeedback('Mismatch', '#ff2e63');
+      }
       this.updateLeaderboard(players);
     });
   }
@@ -225,7 +232,7 @@ export default class GameScene extends Phaser.Scene {
       const data = await resp.json();
       if (data?.pairs && Array.isArray(data.pairs)) {
         // Trigger rendering path via synthetic event
-        (this.client as any).socket?.emit('room_state', { pairs: data.pairs, players: data.players ?? [] });
+        (this.client as any).socket?.emit('game:update_bubbles', { pairs: data.pairs, players: data.players ?? [] });
       }
     } catch {}
   }

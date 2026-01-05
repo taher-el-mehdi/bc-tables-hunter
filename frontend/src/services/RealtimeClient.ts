@@ -40,6 +40,11 @@ export class RealtimeClient {
     this.connect();
     this.socket!.on(event, handler);
   }
+    
+  onStandard(event: 'room:joined' | 'room:user_count' | 'game:update_bubbles' | 'game:match' | 'game:mismatch' | 'leaderboard:update', handler: (payload: any) => void) {
+    this.connect();
+    this.socket!.on(event, handler);
+  }
 
   off(event: string, handler?: (payload: any) => void) {
     this.socket?.off(event, handler as any);

@@ -19,4 +19,6 @@ export const env = {
   STREAK_BONUS: Number(process.env.STREAK_BONUS ?? 5),
   MONGO_URL: process.env.MONGO_URL,
   PERSIST_ENABLED: (process.env.PERSIST_ENABLED ?? 'false').toLowerCase() === 'true',
+  ADMIN_USER: process.env.ADMIN_USER ?? 'admin',
+  ADMIN_PASS: process.env.ADMIN_PASS ?? 'admin',
 };

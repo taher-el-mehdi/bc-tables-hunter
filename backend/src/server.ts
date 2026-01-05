@@ -8,6 +8,7 @@ import { rateLimiter } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import roomsRouter from './routes/rooms.routes.js';
 import { registerSocketHandlers } from './sockets/events.js';
+import { adminRouter } from './routes/admin.routes.js';
 
 export function createServer() {
   const app = express();
@@ -27,6 +28,9 @@ export function createServer() {
 
   app.use('/rooms', roomsRouter(io));
 
+  
+  // Admin endpoints (Basic Auth protected)
+  app.use('/admin', adminRouter());
   app.use(errorHandler);
 
   registerSocketHandlers(io);

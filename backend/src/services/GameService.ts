@@ -23,7 +23,7 @@ export const GameService = {
     // Reset selections
     pendingSelections.set(code, new Map());
     // Broadcast initial room state including leaderboard
-    io.to(code).emit('room_state', {
+    io.to(code).emit('game:update_bubbles', {
       code,
       pairs,
       players: this.leaderboard(room),
@@ -60,7 +60,7 @@ export const GameService = {
     if (isCorrect) ScoreService.correct(player, room.currentQuestion);
     else ScoreService.wrong(player);
 
-    io.to(code).emit('score_updated', { playerId: player.id, score: player.score, streak: player.streak });
+    io.to(code).emit('leaderboard:update', { players: this.leaderboard(room) });
     io.to(player.id).emit('answer_submitted', { correct: isCorrect });
   },
 
@@ -114,8 +114,9 @@ export const GameService = {
       player.score += 10 + (player.streak > 0 ? env.STREAK_BONUS : 0);
       player.streak += 1;
       player.matches = (player.matches ?? 0) + 1;
-      io.to(code).emit('pair_matched', { playerId, pairId: pair.id });
-      io.to(code).emit('leaderboard_update', { players: this.leaderboard(room) });
+      io.to(code).emit('game:match', { playerId, pairId: pair.id });
+      io.to(code).emit('leaderboard:update', { players: this.leaderboard(room) });
+      RoomService.sync(code);
 
       // If all matched, finish
       const allDone = room.pairs.every(p => p.matched);
@@ -125,11 +126,12 @@ export const GameService = {
       player.score += env.WRONG_PENALTY;
       player.streak = 0;
       player.wrong = (player.wrong ?? 0) + 1;
-      io.to(code).emit('selection_update', { playerId, selection: null });
-      io.to(code).emit('leaderboard_update', { players: this.leaderboard(room) });
+      io.to(code).emit('game:mismatch', { playerId, selection: null });
+      io.to(code).emit('leaderboard:update', { players: this.leaderboard(room) });
+      RoomService.sync(code);
     }
     // broadcast score updated for the player
-    io.to(code).emit('score_updated', { playerId: player.id, score: player.score, streak: player.streak });
+    io.to(code).emit('leaderboard:update', { players: this.leaderboard(room) });
   },
 
   generatePairs(count: number): NonNullable<RoomState['pairs']> {

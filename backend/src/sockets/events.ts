@@ -3,14 +3,17 @@ import { RoomService } from '../services/RoomService.js';
 import { GameService } from '../services/GameService.js';
 
 export function registerSocketHandlers(io: Server) {
+  const socketRoomMap = new Map<string, { code: string; playerId: string }>();
   io.on('connection', (socket: Socket) => {
     socket.on('join_room', ({ code, playerName, sound }) => {
       try {
         const player = RoomService.joinRoom(code, playerName, sound);
         socket.join(code);
         socket.join(player.id); // personal channel
-        io.to(code).emit('player_joined', { player: { id: player.id, name: player.name, isHost: player.isHost } });
-        socket.emit('joined', { playerId: player.id, isHost: player.isHost });
+        socketRoomMap.set(socket.id, { code, playerId: player.id });
+        // Backend-driven room events
+        socket.emit('room:joined', { playerId: player.id, isHost: player.isHost, code });
+        io.to(code).emit('room:user_count', { code, count: RoomService.getState(code).players.length });
       } catch (err: any) {
         socket.emit('error', { error: err.message });
       }
@@ -41,7 +44,12 @@ export function registerSocketHandlers(io: Server) {
     });
 
     socket.on('disconnect', () => {
-      // Optionally handle cleanup
+      const meta = socketRoomMap.get(socket.id);
+      if (!meta) return;
+      const { code, playerId } = meta;
+      RoomService.removePlayer(code, playerId);
+      socketRoomMap.delete(socket.id);
+      io.to(code).emit('room:user_count', { code, count: RoomService.getState(code).players.length });
     });
   });
 }
